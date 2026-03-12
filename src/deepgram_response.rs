@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 pub enum ServerMessage {
     Welcome { request_id: uuid::Uuid },
     FunctionCallRequest(DanglingFunctionCallRequests),
+    UserStartedSpeaking,
 }
 
 #[derive(Deserialize, Serialize, Debug, Default, PartialEq, Clone)]

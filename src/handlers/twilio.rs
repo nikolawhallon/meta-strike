@@ -120,6 +120,18 @@ async fn handle_from_deepgram(
                                     .await;
                             }
                         }
+                        deepgram_response::ServerMessage::UserStartedSpeaking => {
+                            dbg!("SHOULD STOP PLAYBACK");
+                            // Tell Twilio to stop any current playback
+                            let clear = json!({
+                                "event": "clear",
+                                "streamSid": streamsid,
+                            });
+
+                            let _ = twilio_sender
+                                .send(Message::Text(clear.to_string().into()))
+                                .await;
+                        }
                         _ => {}
                     }
                 }
@@ -177,7 +189,7 @@ async fn handle_from_twilio(
                     "type": "open_ai",
                     "model": "gpt-4o"
                 },
-                "prompt": "You are able to order Strikes on the map of the game Data Wars if the caller requests one.",
+                "prompt": "You are able to order Strikes on the map of the game Data Wars if the caller requests one. Reply in extremely short utterances.",
                 "functions": [{
                     "name": "strike",
                     "description": "Order a Strike on the game Data Wars.",
